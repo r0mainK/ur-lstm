@@ -1,0 +1,32 @@
+## Task config
+
+# Dataset type, one of mnist, p-mnist, cifat-10
+dataset_type: mnist
+
+# -------------------------------------------------------------------------------------------------
+
+## Model config
+
+# Hidden dim of the LSTM
+hidden_dim_lstm: 1024
+# Hidden dim of the intermediate linear RELU layer
+hidden_dim_relu: 256
+# Model type, one of lstm, u-lstm, r-lstm, ur-lstm
+model_type: ur-lstm
+# Initial forget bias, only used for lstm and r-lstm variants (set to null for regular init)
+forget_bias: 1.
+
+# -------------------------------------------------------------------------------------------------
+
+## Train config
+
+# Batch size
+batch_size: 50
+# Adam learning rate
+learning_rate: 0.001
+# Number of training epochs
+n_epochs: 150
+# Whether to save the model
+save_model: true
+# Random seed
+seed: 22

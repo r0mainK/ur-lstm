@@ -1,0 +1,28 @@
+## Task config
+
+# Time lag between the 10 integers and the 10 cues
+time_lag: 480
+
+# -------------------------------------------------------------------------------------------------
+
+## Model config
+
+# Hidden dim of the LSTM
+hidden_dim: 256
+# Model type, one of lstm, u-lstm, r-lstm, ur-lstm
+model_type: u-lstm
+# Initial forget bias, only used for lstm and r-lstm variants (set to null for regular init)
+forget_bias: 1.
+
+# -------------------------------------------------------------------------------------------------
+
+## Train config
+
+# Batch size
+batch_size: 10
+# Adam learning rate
+learning_rate: 0.001
+# Number of training steps
+n_steps: 10000
+# Random seed
+seed: 22
