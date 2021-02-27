@@ -28,11 +28,6 @@ class URLSTMCell(nn.Module):
     def forward(
         self, x: Tensor, state: Tuple[Tensor, Tensor]
     ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
-        if state is None:
-            state = (
-                torch.zeros((x.shape[0], self.hidden_dim), device=x.device),
-                torch.zeros((x.shape[0], self.hidden_dim), device=x.device),
-            )
         hx, cx = state
         gates = self.igates(x) + self.hgates(hx)
         forget_gate, refine_gate, cell_gate, out_gate = gates.chunk(4, 1)
@@ -54,6 +49,11 @@ class URLSTM(nn.Module):
     def forward(
         self, x: Tensor, state: Optional[Tuple[Tensor, Tensor]] = None
     ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        if state is None:
+            state = (
+                torch.zeros(x.shape[1], self.cell.hidden_dim, device=x.device),
+                torch.zeros(x.shape[1], self.cell.hidden_dim, device=x.device),
+            )
         outputs = []
         for xx in x:
             out, state = self.cell(xx, state)
