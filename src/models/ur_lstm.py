@@ -42,13 +42,16 @@ class URLSTMCell(nn.Module):
 
 
 class URLSTM(nn.Module):
-    def __init__(self, embedding_dim: int, hidden_dim: int):
+    def __init__(self, embedding_dim: int, hidden_dim: int, batch_first: bool = False):
         super(URLSTM, self).__init__()
         self.cell = URLSTMCell(embedding_dim, hidden_dim)
+        self.batch_first = batch_first
 
     def forward(
         self, x: Tensor, state: Optional[Tuple[Tensor, Tensor]] = None
     ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        if self.batch_first:
+            x = x.transpose(0, 1)
         if state is None:
             state = (
                 torch.zeros(x.shape[1], self.cell.hidden_dim, device=x.device),
@@ -59,4 +62,6 @@ class URLSTM(nn.Module):
             out, state = self.cell(xx, state)
             outputs.append(out)
         outputs = torch.stack(outputs, 0)
+        if self.batch_first:
+            outputs = outputs.transpose(0, 1)
         return outputs, state
