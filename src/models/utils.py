@@ -20,18 +20,19 @@ def create_lstm_variant(
     if model_type is ModelType.ur_lstm or model_type is ModelType.r_lstm:
         lstm = URLSTM(embdedding_dim, hidden_dim)
         if model_type is ModelType.r_lstm:
-            lstm.cell.forget_bias.data = torch.zeros(hidden_dim)
-            if forget_bias is not None:
-                lstm.cell.igates[:hidden_dim] = forget_bias
-                lstm.cell.hgates[:hidden_dim] = forget_bias
+            with torch.no_grad():
+                lstm.cell.forget_bias.zero_()
+                if forget_bias is not None:
+                    lstm.cell.igates.bias[:hidden_dim].fill_(forget_bias)
+                    lstm.cell.hgates.bias[:hidden_dim].zero_()
         return lstm
     lstm = nn.LSTM(embdedding_dim, hidden_dim)
-    if model_type is ModelType.u_lstm:
-        u = torch.rand(hidden_dim) * (1 - 2 / hidden_dim) + 1 / hidden_dim
-        lstm.bias_ih_l0.data[hidden_dim : 2 * hidden_dim] = -(1 / u - 1).log()
-        u = torch.rand(hidden_dim) * (1 - 2 / hidden_dim) + 1 / hidden_dim
-        lstm.bias_hh_l0.data[hidden_dim : 2 * hidden_dim] = -(1 / u - 1).log()
-    elif forget_bias is not None:
-        lstm.bias_ih_l0.data[hidden_dim : 2 * hidden_dim] = forget_bias
-        lstm.bias_hh_l0.data[hidden_dim : 2 * hidden_dim] = forget_bias
+    with torch.no_grad():
+        if model_type is ModelType.u_lstm:
+            u = torch.rand(hidden_dim) * (1 - 2 / hidden_dim) + 1 / hidden_dim
+            lstm.bias_ih_l0[hidden_dim : 2 * hidden_dim].copy_(-(1 / u - 1).log())
+            lstm.bias_hh_l0[hidden_dim : 2 * hidden_dim].zero_()
+        elif forget_bias is not None:
+            lstm.bias_ih_l0[hidden_dim : 2 * hidden_dim].fill_(forget_bias)
+            lstm.bias_hh_l0[hidden_dim : 2 * hidden_dim].zero_()
     return lstm

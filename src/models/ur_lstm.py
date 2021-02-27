@@ -22,7 +22,8 @@ class URLSTMCell(nn.Module):
         for weight in self.parameters():
             nn.init.uniform_(weight, -stdv, stdv)
         u = torch.rand(self.hidden_dim) * (1 - 2 / self.hidden_dim) + 1 / self.hidden_dim
-        self.forget_bias.data = -(1 / u - 1).log()
+        with torch.no_grad():
+            self.forget_bias.copy_(-(1 / u - 1).log())
 
     def forward(
         self, x: Tensor, state: Tuple[Tensor, Tensor]
