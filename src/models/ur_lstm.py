@@ -8,20 +8,20 @@ import torch.nn as nn
 
 
 class URLSTMCell(nn.Module):
-    def __init__(self, embedding_dim: int, hidden_dim: int):
+    def __init__(self, input_size: int, hidden_size: int):
         super(URLSTMCell, self).__init__()
-        self.input_dim = embedding_dim
-        self.hidden_dim = hidden_dim
-        self.igates = nn.Linear(embedding_dim, hidden_dim * 4)
-        self.hgates = nn.Linear(hidden_dim, hidden_dim * 4)
-        self.forget_bias = nn.Parameter(torch.zeros(hidden_dim))
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.igates = nn.Linear(input_size, hidden_size * 4)
+        self.hgates = nn.Linear(hidden_size, hidden_size * 4)
+        self.forget_bias = nn.Parameter(torch.zeros(hidden_size))
         self.reset_parameters()
 
     def reset_parameters(self) -> None:
-        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
             nn.init.uniform_(weight, -stdv, stdv)
-        u = torch.rand(self.hidden_dim) * (1 - 2 / self.hidden_dim) + 1 / self.hidden_dim
+        u = torch.rand(self.hidden_size) * (1 - 2 / self.hidden_size) + 1 / self.hidden_size
         with torch.no_grad():
             self.forget_bias.copy_(-(1 / u - 1).log())
 
@@ -42,9 +42,9 @@ class URLSTMCell(nn.Module):
 
 
 class URLSTM(nn.Module):
-    def __init__(self, embedding_dim: int, hidden_dim: int, batch_first: bool = False):
+    def __init__(self, input_size: int, hidden_size: int, batch_first: bool = False):
         super(URLSTM, self).__init__()
-        self.cell = URLSTMCell(embedding_dim, hidden_dim)
+        self.cell = URLSTMCell(input_size, hidden_size)
         self.batch_first = batch_first
 
     def forward(
@@ -54,8 +54,8 @@ class URLSTM(nn.Module):
             x = x.transpose(0, 1)
         if state is None:
             state = (
-                torch.zeros(x.shape[1], self.cell.hidden_dim, device=x.device),
-                torch.zeros(x.shape[1], self.cell.hidden_dim, device=x.device),
+                torch.zeros(x.shape[1], self.cell.hidden_size, device=x.device),
+                torch.zeros(x.shape[1], self.cell.hidden_size, device=x.device),
             )
         outputs = []
         for xx in x:

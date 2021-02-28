@@ -39,15 +39,15 @@ def main() -> None:
     root_dir = Path(__file__).parent.parent / "data"
 
     if conf.dataset_type is DatasetType.cifar_10:
-        n_channel = 3
+        n_channels = 3
         image_size = 32 * 32
-        transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channel, -1).t())])
+        transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channels, -1).t())])
         train_dataset = CIFAR10(root_dir, download=True, train=True, transform=transform)
         test_dataset = CIFAR10(root_dir, download=True, train=False, transform=transform)
     else:
-        n_channel = 1
+        n_channels = 1
         image_size = 28 * 28
-        transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channel, -1).t())])
+        transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channels, -1).t())])
         train_dataset = MNIST(root_dir, download=True, train=True, transform=transform)
         test_dataset = MNIST(root_dir, download=True, train=False, transform=transform)
         if conf.dataset_type is DatasetType.permutated_mnist:
@@ -56,10 +56,10 @@ def main() -> None:
 
     model = ImageModel(
         conf.model_type,
-        n_channel,
+        n_channels,
         image_size,
-        conf.hidden_dim_lstm,
-        conf.hidden_dim_relu,
+        conf.hidden_size_lstm,
+        conf.hidden_size_relu,
         conf.forget_bias,
     )
     model.to(device)

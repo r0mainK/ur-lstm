@@ -36,8 +36,8 @@ def main() -> None:
     model = LanguageModel(
         conf.model_type,
         len(train_generator.dataset.fields["text"].vocab),
-        conf.embedding_dim,
-        conf.hidden_dim,
+        conf.embedding_size,
+        conf.hidden_size,
         conf.dropout_rate,
         conf.forget_bias,
     )

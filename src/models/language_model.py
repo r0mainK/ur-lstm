@@ -12,18 +12,18 @@ class LanguageModel(nn.Module):
     def __init__(
         self,
         model_type: ModelType,
-        vocab_dim: int,
-        embedding_dim: int,
-        hidden_dim: int,
+        vocab_size: int,
+        embedding_size: int,
+        hidden_size: int,
         dropout_rate: float,
         forget_bias: float,
     ):
         super(LanguageModel, self).__init__()
         self.dropout = nn.Dropout(dropout_rate)
-        self.encoder = nn.Embedding(vocab_dim, embedding_dim)
-        self.lstm = create_lstm_variant(model_type, embedding_dim, hidden_dim, forget_bias)
-        self.out_proj = nn.Linear(hidden_dim, embedding_dim)
-        self.decoder = nn.Linear(embedding_dim, vocab_dim, bias=False)
+        self.encoder = nn.Embedding(vocab_size, embedding_size)
+        self.lstm = create_lstm_variant(model_type, embedding_size, hidden_size, forget_bias)
+        self.out_proj = nn.Linear(hidden_size, embedding_size)
+        self.decoder = nn.Linear(embedding_size, vocab_size, bias=False)
         self.decoder.weight = nn.Parameter(self.encoder.weight)
 
     def forward(

@@ -21,7 +21,7 @@ def main() -> None:
     writer = create_writer(Path(f"copy-task-{conf.time_lag}"), conf.model_type, conf.seed)
     device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
     torch.random.manual_seed(conf.seed)
-    model = CopyModel(conf.model_type, conf.hidden_dim, conf.forget_bias)
+    model = CopyModel(conf.model_type, conf.hidden_size, conf.forget_bias)
     model.to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = AdamW(model.parameters(), lr=conf.learning_rate)

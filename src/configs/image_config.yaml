@@ -7,10 +7,10 @@ dataset_type: mnist
 
 ## Model config
 
-# Hidden dim of the LSTM
-hidden_dim_lstm: 1024
-# Hidden dim of the intermediate linear RELU layer
-hidden_dim_relu: 256
+# Hidden size of the LSTM
+hidden_size_lstm: 1024
+# Hidden size of the intermediate linear RELU layer
+hidden_size_relu: 256
 # Model type, one of lstm, u-lstm, r-lstm, ur-lstm
 model_type: ur-lstm
 # Initial forget bias, only used for lstm and r-lstm variants (set to null for regular init)

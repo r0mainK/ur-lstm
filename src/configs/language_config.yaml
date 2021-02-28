@@ -2,10 +2,10 @@
 
 # Embedding dropout rate
 dropout_rate: .3
-# Embedding dim
-embedding_dim: 1024
-# Hidden dim of the LSTM
-hidden_dim: 3072
+# Embedding size
+embedding_size: 1024
+# Hidden size of the LSTM
+hidden_size: 3072
 # Model type, one of lstm, u-lstm, r-lstm, ur-lstm
 model_type: ur-lstm
 # Initial forget bias, only used for lstm and r-lstm variants (set to null for regular init)
