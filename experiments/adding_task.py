@@ -12,7 +12,7 @@ import tqdm
 from datasets.adding_dataset import AddingDataset
 from models.adding_model import AddingModel
 from models.utils import ModelType
-from utils.tensorboard_utils import create_writer
+from tensorboard_utils import create_writer
 
 
 def main() -> None:

@@ -4,7 +4,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from .ur_lstm import URLSTM
+from ur_lstm import URLSTM
 
 
 class ModelType(str, Enum):

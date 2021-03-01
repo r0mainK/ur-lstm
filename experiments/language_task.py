@@ -14,7 +14,7 @@ import tqdm
 
 from models.language_model import LanguageModel
 from models.utils import ModelType
-from utils.tensorboard_utils import create_writer
+from tensorboard_utils import create_writer
 
 
 # TODO: Remove this when new torchtext API is released and integrated

@@ -18,7 +18,7 @@ import tqdm
 from datasets.permuted_dataset import PermutatedDataset
 from models.image_model import ImageModel
 from models.utils import ModelType
-from utils.tensorboard_utils import create_writer
+from tensorboard_utils import create_writer
 
 
 class DatasetType(str, Enum):

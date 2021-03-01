@@ -10,7 +10,7 @@ time_lag: 480
 # Hidden size of the LSTM
 hidden_size: 256
 # Model type, one of lstm, u-lstm, r-lstm, ur-lstm
-model_type: u-lstm
+model_type: ur-lstm
 # Initial forget bias, only used for lstm and r-lstm variants (set to null for regular init)
 forget_bias: 1.
 

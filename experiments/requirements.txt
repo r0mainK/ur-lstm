@@ -4,3 +4,4 @@ torch>=1.7,<1.8
 torchvision>=0.8,<0.9
 torchvision>=0.8,<0.9
 tqdm>=4.57,<5
+ur-lstm-torch==0.0.1
