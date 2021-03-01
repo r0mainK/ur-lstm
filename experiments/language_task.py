@@ -27,10 +27,10 @@ def main() -> None:
     writer = create_writer(Path("language-modeling"), conf.model_type, conf.seed)
     device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
     torch.random.manual_seed(conf.seed)
-    root_dir = Path(__file__).parent.parent / "data"
-    WikiText103.download(root_dir)
+    data_dir = Path(__file__).parent / "data"
+    WikiText103.download(data_dir)
     train_generator, val_generator, test_generator = WikiText103.iters(
-        batch_size=conf.batch_size, bptt_len=conf.seq_length, root=root_dir, device=device
+        batch_size=conf.batch_size, bptt_len=conf.seq_length, root=data_dir, device=device
     )
 
     model = LanguageModel(
@@ -67,11 +67,11 @@ def main() -> None:
     print(f"test perplexity: {math.exp(total_loss)}")
 
     if conf.save_model:
-        root_dir = Path(__file__).parent.parent / "saved_models" / conf.dataset_type
-        root_dir.mkdir(parents=True, exist_ok=True)
-        file_name = root_dir / f"{conf.model_type}-{conf.seed}.pt"
+        output_dir = Path(__file__).parent / "saved_models" / conf.dataset_type
+        output_dir.mkdir(parents=True, exist_ok=True)
+        file_name = output_dir / f"{conf.model_type}-{conf.seed}.pt"
         torch.save(file_name, model.state_dict())
-        file_name = root_dir / f"{conf.model_type}-{conf.seed}-vocab.pt"
+        file_name = output_dir / f"{conf.model_type}-{conf.seed}-vocab.pt"
         torch.save(file_name, train_generator.dataset.fields["text"].vocab.itos)
 
 

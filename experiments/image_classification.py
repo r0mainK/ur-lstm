@@ -36,20 +36,20 @@ def main() -> None:
     )
     device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
     torch.random.manual_seed(conf.seed)
-    root_dir = Path(__file__).parent.parent / "data"
+    data_dir = Path(__file__).parent / "data"
 
     if conf.dataset_type is DatasetType.cifar_10:
         n_channels = 3
         image_size = 32 * 32
         transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channels, -1).t())])
-        train_dataset = CIFAR10(root_dir, download=True, train=True, transform=transform)
-        test_dataset = CIFAR10(root_dir, download=True, train=False, transform=transform)
+        train_dataset = CIFAR10(data_dir, download=True, train=True, transform=transform)
+        test_dataset = CIFAR10(data_dir, download=True, train=False, transform=transform)
     else:
         n_channels = 1
         image_size = 28 * 28
         transform = Compose([ToTensor(), Lambda(lambda t: t.reshape(n_channels, -1).t())])
-        train_dataset = MNIST(root_dir, download=True, train=True, transform=transform)
-        test_dataset = MNIST(root_dir, download=True, train=False, transform=transform)
+        train_dataset = MNIST(data_dir, download=True, train=True, transform=transform)
+        test_dataset = MNIST(data_dir, download=True, train=False, transform=transform)
         if conf.dataset_type is DatasetType.permutated_mnist:
             train_dataset = PermutatedDataset(train_dataset, image_size)
             test_dataset = PermutatedDataset(test_dataset, image_size)
@@ -100,9 +100,9 @@ def main() -> None:
         writer.add_scalar("Test Cross Entropy", total_loss / len(test_dataset), epoch)
 
     if conf.save_model:
-        root_dir = Path(__file__).parent.parent / "saved_models" / conf.dataset_type
-        root_dir.mkdir(parents=True, exist_ok=True)
-        file_name = root_dir / f"{conf.model_type}-{conf.seed}.pt"
+        output_dir = Path(__file__).parent / "saved_models" / conf.dataset_type
+        output_dir.mkdir(parents=True, exist_ok=True)
+        file_name = output_dir / f"{conf.model_type}-{conf.seed}.pt"
         torch.save(file_name, model.state_dict())
 
 
