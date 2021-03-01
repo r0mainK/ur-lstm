@@ -21,10 +21,10 @@ def create_lstm_variant(
         lstm = URLSTM(input_size, hidden_size)
         if model_type is ModelType.r_lstm:
             with torch.no_grad():
-                lstm.cell.forget_bias.zero_()
+                lstm.layers[0].forget_bias.zero_()
                 if forget_bias is not None:
-                    lstm.cell.igates.bias[:hidden_size].fill_(forget_bias)
-                    lstm.cell.hgates.bias[:hidden_size].zero_()
+                    lstm.layers[0].igates.bias[:hidden_size].fill_(forget_bias)
+                    lstm.layers[0].hgates.bias[:hidden_size].zero_()
         return lstm
     lstm = nn.LSTM(input_size, hidden_size)
     with torch.no_grad():

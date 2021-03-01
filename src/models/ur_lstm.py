@@ -1,6 +1,8 @@
 import math
+import numbers
 from typing import Optional
 from typing import Tuple
+import warnings
 
 import torch
 from torch import Tensor
@@ -42,10 +44,38 @@ class URLSTMCell(nn.Module):
 
 
 class URLSTM(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int, batch_first: bool = False):
+    def __init__(
+        self,
+        input_size: int,
+        hidden_size: int,
+        num_layers: int = 1,
+        batch_first: bool = False,
+        dropout: float = 0.0,
+    ):
         super(URLSTM, self).__init__()
-        self.cell = URLSTMCell(input_size, hidden_size)
+        self.layers = nn.ModuleList(
+            URLSTMCell(input_size, hidden_size) if i == 0 else URLSTMCell(hidden_size, hidden_size)
+            for i in range(num_layers)
+        )
+        self.hidden_size = hidden_size
         self.batch_first = batch_first
+        if (
+            not isinstance(dropout, numbers.Number)
+            or not 0 <= dropout <= 1
+            or isinstance(dropout, bool)
+        ):
+            raise ValueError(
+                "dropout should be a number in range [0, 1] "
+                "representing the probability of an element being "
+                "zeroed"
+            )
+        if dropout > 0 and num_layers == 1:
+            warnings.warn(
+                "dropout option adds dropout after all but last recurrent layer, so non-zero "
+                f"dropout expects num_layers greater than 1, but got dropout={dropout} and "
+                f"num_layers={num_layers}"
+            )
+        self.dropout = nn.Dropout(dropout)
 
     def forward(
         self, x: Tensor, state: Optional[Tuple[Tensor, Tensor]] = None
@@ -54,14 +84,23 @@ class URLSTM(nn.Module):
             x = x.transpose(0, 1)
         if state is None:
             state = (
-                torch.zeros(x.shape[1], self.cell.hidden_size, device=x.device),
-                torch.zeros(x.shape[1], self.cell.hidden_size, device=x.device),
+                torch.zeros(len(self.layers), x.shape[1], self.hidden_size, device=x.device),
+                torch.zeros(len(self.layers), x.shape[1], self.hidden_size, device=x.device),
             )
-        outputs = []
-        for xx in x:
-            out, state = self.cell(xx, state)
-            outputs.append(out)
-        outputs = torch.stack(outputs, 0)
+        out_states = [], []
+        for i, layer in enumerate(self.layers):
+            outputs = []
+            layer_state = state[0][i], state[1][i]
+            for xx in x:
+                out, layer_state = layer(xx, layer_state)
+                if i != len(self.layers) - 1:
+                    out = self.dropout(out)
+                outputs.append(out)
+            outputs = torch.stack(outputs, 0)
+            x = outputs
+            out_states[0].append(layer_state[0])
+            out_states[1].append(layer_state[1])
+        out_states = (torch.stack(out_states[0], 0), torch.stack(out_states[1], 0))
         if self.batch_first:
             outputs = outputs.transpose(0, 1)
-        return outputs, state
+        return outputs, out_states
