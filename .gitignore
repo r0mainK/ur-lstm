@@ -1,20 +1,23 @@
 # Environments
-.env
+**/.env
 
 # VSCode
 .vscode
 
 # Tensorboard
-runs
+experiments/runs
 
 # Saved models
-saved_models
+experiments/saved_models
 
 # Datasets
-data
+experiments/data
 
 # Mac
 .DS_Store
 
 # Python
 **/__pycache__
+build
+dist
+*.egg-info
