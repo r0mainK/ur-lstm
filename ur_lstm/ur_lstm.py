@@ -65,9 +65,8 @@ class URLSTM(nn.Module):
             or isinstance(dropout, bool)
         ):
             raise ValueError(
-                "dropout should be a number in range [0, 1] "
-                "representing the probability of an element being "
-                "zeroed"
+                "dropout should be a number in range [0, 1] representing the probability of an "
+                "element being zeroed"
             )
         if dropout > 0 and num_layers == 1:
             warnings.warn(
