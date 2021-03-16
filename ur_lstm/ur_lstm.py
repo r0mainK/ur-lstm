@@ -38,7 +38,7 @@ class URLSTMCell(nn.Module):
         cell_gate = torch.tanh(cell_gate)
         out_gate = torch.sigmoid(out_gate)
         effective_gate = 2 * refine_gate * forget_gate + (1 - 2 * refine_gate) * forget_gate ** 2
-        cy = effective_gate * cx + (1 - effective_gate) * torch.tanh(cell_gate)
+        cy = effective_gate * cx + (1 - effective_gate) * cell_gate
         hy = out_gate * torch.tanh(cy)
         return hy, (hy, cy)
 
